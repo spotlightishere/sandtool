@@ -11,15 +11,16 @@ let package = Package(
     products: [
         .library(
             name: "Sandstone",
-            targets: ["Sandstone"]),
+            targets: ["Sandstone"]
+        ),
     ],
     targets: [
         .target(
             name: "Sandstone",
             dependencies: [
-                "CSandbox"
+                "CSandbox",
             ]
         ),
-        .systemLibrary(name: "CSandbox")
+        .systemLibrary(name: "CSandbox"),
     ]
 )

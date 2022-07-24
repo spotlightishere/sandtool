@@ -11,13 +11,13 @@ import SwiftUI
 struct ContentView: View {
     @State private var input: String = "Input"
     @State private var output: String = "Compiled Output Goes Here"
-    
+
     var body: some View {
         VStack {
             TextEditor(text: $input)
                 .foregroundColor(Color(red: 31, green: 31, blue: 31))
                 .font(.system(.body, design: .monospaced))
-            
+
             Button("Compile", action: {
                 do {
                     let result = try Sandstone.compile(profile: input)
@@ -26,7 +26,7 @@ struct ContentView: View {
                     output = "An error occurred: \(e)"
                 }
             })
-            
+
             TextEditor(text: .constant(output))
                 // #1F1F1F
                 .foregroundColor(Color(red: 31, green: 31, blue: 31))
@@ -38,16 +38,16 @@ struct ContentView: View {
 // http://stackoverflow.com/a/40089462
 extension Data {
     func hexEncodedString() -> String {
-        return map { String(format: "%02hhx", $0) }.joined()
+        map { String(format: "%02hhx", $0) }.joined()
     }
 }
 
 // lol
 // https://stackoverflow.com/a/66725525
 extension NSTextView {
-    open override var frame: CGRect {
+    override open var frame: CGRect {
         didSet {
-            self.isAutomaticQuoteSubstitutionEnabled = false
+            isAutomaticQuoteSubstitutionEnabled = false
         }
     }
 }

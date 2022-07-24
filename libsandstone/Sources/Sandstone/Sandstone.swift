@@ -5,7 +5,7 @@ struct SandboxError: Error {
     let message: String
 }
 
-public struct Sandstone {
+public enum Sandstone {
     /// Compiles the passed profile in SBPL.
     /// - Parameter profile: A string of SBPL to request to be compiled
     /// - Returns: The compiled profile's bytecode.
@@ -16,16 +16,16 @@ public struct Sandstone {
         // Call!
         let profileString = profile.cString(using: .utf8)
         let compiledProfile = sandbox_compile_string(profileString, nil, &errorPointer)
-        
+
         // Uh oh... time to handle.
         if let errorString = errorPointer {
             let errorMessage = String(cString: errorString, encoding: .utf8) ?? "Unable to decode string."
-            
+
             // Wow, C is awful.
             free(errorString)
             throw SandboxError(message: errorMessage)
         }
-        
+
         guard let profile = compiledProfile?.pointee else {
             // TODO: Is there a nicer way to handle this?
             // Hopefully it will never occur...
@@ -35,7 +35,7 @@ public struct Sandstone {
         // Finally, we can get on with our day.
         let contents = Data(bytes: profile.bytecode, count: profile.bytecode_length)
         sandbox_free_profile(compiledProfile)
-        
+
         return contents
     }
 }
