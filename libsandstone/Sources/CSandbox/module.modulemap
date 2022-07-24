@@ -1,0 +1,5 @@
+module CSandbox [system] {
+    header "include/libsandbox.h"
+    link "sandbox"
+    export *
+}
