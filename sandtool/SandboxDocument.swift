@@ -1,5 +1,5 @@
 //
-//  BytecodeDocument.swift
+//  SandboxDocument.swift
 //  sandtool
 //
 //  Created by Spotlight Deveaux on 2022-07-25.
@@ -9,7 +9,7 @@ import Sandstone
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct BytecodeDocument: FileDocument {
+struct SandboxDocument: FileDocument {
     // We do not want to associate ourselves to anything specific.
     static var readableContentTypes: [UTType] = [
         UTType.data,

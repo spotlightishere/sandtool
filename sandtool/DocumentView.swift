@@ -9,7 +9,7 @@ import Sandstone
 import SwiftUI
 
 struct DocumentView: View {
-    @Binding var bytecode: BytecodeDocument
+    @Binding var bytecode: SandboxDocument
 
     var body: some View {
         Text("Hello, World!")

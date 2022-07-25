@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct sandtoolApp: App {
     var body: some Scene {
-        DocumentGroup(viewing: BytecodeDocument.self) { file in
+        DocumentGroup(viewing: SandboxDocument.self) { file in
             DocumentView(bytecode: file.$document)
         }
     }

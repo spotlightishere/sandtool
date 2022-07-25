@@ -11,7 +11,7 @@
 		422CB722288D17BA001013CA /* CompileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422CB721288D17BA001013CA /* CompileView.swift */; };
 		422CB724288D17BC001013CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 422CB723288D17BC001013CA /* Assets.xcassets */; };
 		422CB727288D17BC001013CA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 422CB726288D17BC001013CA /* Preview Assets.xcassets */; };
-		42794753288E83AA0061611F /* BytecodeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42794752288E83AA0061611F /* BytecodeDocument.swift */; };
+		42794753288E83AA0061611F /* SandboxDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42794752288E83AA0061611F /* SandboxDocument.swift */; };
 		42794757288E849E0061611F /* DocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42794756288E849E0061611F /* DocumentView.swift */; };
 		42AAC33A288E10CA00B493D1 /* HexView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42AAC339288E10CA00B493D1 /* HexView.swift */; };
 		42F362B3288D2FB5008C6758 /* Sandstone in Frameworks */ = {isa = PBXBuildFile; productRef = 42F362B2288D2FB5008C6758 /* Sandstone */; };
@@ -25,7 +25,7 @@
 		422CB726288D17BC001013CA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		422CB728288D17BC001013CA /* sandtool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = sandtool.entitlements; sourceTree = "<group>"; };
 		422CB72F288D1940001013CA /* libsandstone */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = libsandstone; sourceTree = "<group>"; };
-		42794752288E83AA0061611F /* BytecodeDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BytecodeDocument.swift; sourceTree = "<group>"; };
+		42794752288E83AA0061611F /* SandboxDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxDocument.swift; sourceTree = "<group>"; };
 		42794756288E849E0061611F /* DocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentView.swift; sourceTree = "<group>"; };
 		42AAC339288E10CA00B493D1 /* HexView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,10 +64,10 @@
 			isa = PBXGroup;
 			children = (
 				422CB71F288D17BA001013CA /* sandtoolApp.swift */,
-				42794752288E83AA0061611F /* BytecodeDocument.swift */,
 				422CB721288D17BA001013CA /* CompileView.swift */,
 				42794756288E849E0061611F /* DocumentView.swift */,
 				42AAC339288E10CA00B493D1 /* HexView.swift */,
+				42794752288E83AA0061611F /* SandboxDocument.swift */,
 				422CB723288D17BC001013CA /* Assets.xcassets */,
 				422CB728288D17BC001013CA /* sandtool.entitlements */,
 				422CB725288D17BC001013CA /* Preview Content */,
@@ -166,7 +166,7 @@
 				422CB722288D17BA001013CA /* CompileView.swift in Sources */,
 				422CB720288D17BA001013CA /* sandtoolApp.swift in Sources */,
 				42AAC33A288E10CA00B493D1 /* HexView.swift in Sources */,
-				42794753288E83AA0061611F /* BytecodeDocument.swift in Sources */,
+				42794753288E83AA0061611F /* SandboxDocument.swift in Sources */,
 				42794757288E849E0061611F /* DocumentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
