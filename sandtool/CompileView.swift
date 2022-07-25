@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  CompileView.swift
 //  sandtool
 //
 //  Created by Spotlight Deveaux on 2022-07-24.
@@ -8,7 +8,7 @@
 import Sandstone
 import SwiftUI
 
-struct ContentView: View {
+struct CompileView: View {
     @State private var input: String = "Input"
     @State private var output: Data = .init()
     @State private var compilerError: String = ""
@@ -56,8 +56,8 @@ extension NSTextView {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct CompileView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        CompileView()
     }
 }

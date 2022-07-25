@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		422CB720288D17BA001013CA /* sandtoolApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422CB71F288D17BA001013CA /* sandtoolApp.swift */; };
-		422CB722288D17BA001013CA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422CB721288D17BA001013CA /* ContentView.swift */; };
+		422CB722288D17BA001013CA /* CompileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422CB721288D17BA001013CA /* CompileView.swift */; };
 		422CB724288D17BC001013CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 422CB723288D17BC001013CA /* Assets.xcassets */; };
 		422CB727288D17BC001013CA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 422CB726288D17BC001013CA /* Preview Assets.xcassets */; };
 		42AAC33A288E10CA00B493D1 /* HexView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42AAC339288E10CA00B493D1 /* HexView.swift */; };
@@ -18,7 +18,7 @@
 /* Begin PBXFileReference section */
 		422CB71C288D17BA001013CA /* sandtool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sandtool.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		422CB71F288D17BA001013CA /* sandtoolApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sandtoolApp.swift; sourceTree = "<group>"; };
-		422CB721288D17BA001013CA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		422CB721288D17BA001013CA /* CompileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompileView.swift; sourceTree = "<group>"; };
 		422CB723288D17BC001013CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		422CB726288D17BC001013CA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		422CB728288D17BC001013CA /* sandtool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = sandtool.entitlements; sourceTree = "<group>"; };
@@ -60,7 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				422CB71F288D17BA001013CA /* sandtoolApp.swift */,
-				422CB721288D17BA001013CA /* ContentView.swift */,
+				422CB721288D17BA001013CA /* CompileView.swift */,
 				42AAC339288E10CA00B493D1 /* HexView.swift */,
 				422CB723288D17BC001013CA /* Assets.xcassets */,
 				422CB728288D17BC001013CA /* sandtool.entitlements */,
@@ -157,7 +157,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				422CB722288D17BA001013CA /* ContentView.swift in Sources */,
+				422CB722288D17BA001013CA /* CompileView.swift in Sources */,
 				422CB720288D17BA001013CA /* sandtoolApp.swift in Sources */,
 				42AAC33A288E10CA00B493D1 /* HexView.swift in Sources */,
 			);
