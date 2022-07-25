@@ -1,8 +1,10 @@
 import CSandbox
 import Foundation
 
-struct SandboxError: Error {
-    let message: String
+/// An error reported by libsandbox upon compile.
+public struct SandboxError: Error {
+    /// The contents of the error reported by libsandbox.
+    public let message: String
 }
 
 public enum Sandstone {

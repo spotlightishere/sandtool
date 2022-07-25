@@ -10,7 +10,8 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var input: String = "Input"
-    @State private var output: String = "Compiled Output Goes Here"
+    @State private var output: Data = .init()
+    @State private var compilerError: String = ""
 
     var body: some View {
         VStack {
@@ -20,25 +21,28 @@ struct ContentView: View {
 
             Button("Compile", action: {
                 do {
-                    let result = try Sandstone.compile(profile: input)
-                    output = result.hexEncodedString()
+                    output = try Sandstone.compile(profile: input)
+                    compilerError = ""
+                } catch let e as SandboxError {
+                    compilerError = "An error occurred while compiling:\n\n \(e.message)"
                 } catch let e {
-                    output = "An error occurred: \(e)"
+                    compilerError = "A generic error occurred while compiling:\n\n \(e)"
                 }
             })
 
-            TextEditor(text: .constant(output))
-                // #1F1F1F
-                .foregroundColor(Color(red: 31, green: 31, blue: 31))
-                .font(.system(.body, design: .monospaced))
-        }.padding()
-    }
-}
+            ZStack {
+                // Hex output view on success
+                HexView(contents: $output)
 
-// http://stackoverflow.com/a/40089462
-extension Data {
-    func hexEncodedString() -> String {
-        map { String(format: "%02hhx", $0) }.joined()
+                // Error view on failure
+                if !compilerError.isEmpty {
+                    TextEditor(text: .constant(compilerError))
+                        // #1F1F1F
+                        .foregroundColor(.red)
+                        .font(.system(.body, design: .monospaced))
+                }
+            }
+        }.padding()
     }
 }
 
