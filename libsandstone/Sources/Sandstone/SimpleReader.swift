@@ -28,7 +28,7 @@ class SimpleReader {
     /// - Parameter contents: The contents to read with.
     init(with contents: Data) {
         self.contents = contents
-        self.internalOffset = contents.startIndex
+        internalOffset = contents.startIndex
     }
 
     // MARK: Positional readers
@@ -113,7 +113,7 @@ class SimpleReader {
     func readString(at offset: TableOffset) throws -> String {
         // Table offsets should be multiplied by 0x8 to get their true value.
         let realOffset = Int(offset) * 0x8
-        
+
         // Every string has a UInt16 prefixing its length, i.e. Pascal strings.
         let stringLength = readBytes(at: realOffset, length: 2).uint16()
 
