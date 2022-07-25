@@ -28,6 +28,7 @@ class SimpleReader {
     /// - Parameter contents: The contents to read with.
     init(with contents: Data) {
         self.contents = contents
+        self.internalOffset = contents.startIndex
     }
 
     // MARK: Positional readers
@@ -36,7 +37,8 @@ class SimpleReader {
     /// - Parameter length: The amount of bytes to read.
     /// - Returns: The specified amoiunt of data.
     func readHeaderBytes(length: Int) -> Data {
-        let readData = contents[internalOffset ..< internalOffset + length]
+        // Special case: as we're still tracking, this is at position+0.
+        let readData = readBytes(at: 0, length: length)
         // Increase internal position.
         internalOffset += length
 
@@ -89,7 +91,8 @@ class SimpleReader {
     ///   - length: How many bytes to read.
     /// - Returns: The specified amount of data.
     func readBytes(at offset: TableOffset, length: Int) -> Data {
-        readBytes(at: Int(offset), length: length)
+        // Table offsets should be multiplied by 0x8 to get their true value.
+        readBytes(at: Int(offset) * 0x8, length: length)
     }
 
     /// Reads the specified amount of bytes at the given offset.
@@ -108,13 +111,14 @@ class SimpleReader {
     ///   - length: How many bytes to read.
     /// - Returns: The specified amoiunt of data.
     func readString(at offset: TableOffset) throws -> String {
-        let effectiveOffset = internalOffset + Int(offset)
-
+        // Table offsets should be multiplied by 0x8 to get their true value.
+        let realOffset = Int(offset) * 0x8
+        
         // Every string has a UInt16 prefixing its length, i.e. Pascal strings.
-        let stringLength = readBytes(at: effectiveOffset, length: 2).uint16()
+        let stringLength = readBytes(at: realOffset, length: 2).uint16()
 
         // Our string begins at offset + 2 to skip past the UInt16.
-        let stringData = readBytes(at: effectiveOffset + 2, length: Int(stringLength))
+        let stringData = readBytes(at: realOffset + 2, length: Int(stringLength))
 
         // Attempt to encode. Fingers crossed...
         guard let string = String(bytes: stringData, encoding: .utf8) else {

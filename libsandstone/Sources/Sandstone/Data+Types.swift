@@ -16,7 +16,7 @@ extension Data {
     func uint16(at offset: Int = 0) -> UInt16 {
         // TODO: There has to be a safer way to do this.
         // Courtesy of https://stackoverflow.com/a/47764694
-        let contents = [self[offset], self[offset + 1]]
+        let contents = [uint8(at: offset), uint8(at: offset+1)]
 
         return contents.withUnsafeBytes { bytes in
             bytes.load(as: UInt16.self)
@@ -30,6 +30,6 @@ extension Data {
     /// - Parameter offset:The offset within data.
     /// - Returns: A usable UInt8.
     func uint8(at offset: Int = 0) -> UInt8 {
-        self[offset]
+        self[self.startIndex + offset]
     }
 }

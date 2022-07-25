@@ -102,7 +102,7 @@ public struct BytecodeWrapper {
             // For an unknown reason, collection profiles are 0x178 in length.
             // Perhaps the extra bytes provide an offset for the bundle's name.
             // TODO: determine
-            let profileContents = contents.readHeaderDynamicLength(count: header.profileCount, length: 0x172)
+            let profileContents = contents.readHeaderDynamicLength(count: header.profileCount, length: 0x178)
 
             var tempProfiles: [BytecodeProfile] = []
             for profile in profileContents {
