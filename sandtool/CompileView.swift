@@ -32,7 +32,7 @@ struct CompileView: View {
 
             ZStack {
                 // Hex output view on success
-                HexView(contents: $output)
+                HexView(contents: output)
 
                 // Error view on failure
                 if !compilerError.isEmpty {

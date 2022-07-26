@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HexView: View {
-    @Binding var contents: Data
+    var contents: Data
 
     var body: some View {
         TextEditor(text: .constant(contents.hexEncodedString()))
@@ -19,14 +19,14 @@ struct HexView: View {
 }
 
 struct HexView_Previews: PreviewProvider {
-    @State static var emptyData = Data()
-    @State static var genericData = Data(repeating: 0xFF, count: 32)
+    static var emptyData = Data()
+    static var genericData = Data(repeating: 0xFF, count: 32)
 
     static var previews: some View {
         // Generic empty view
-        HexView(contents: $emptyData)
+        HexView(contents: emptyData)
         // Generic data view
-        HexView(contents: $genericData)
+        HexView(contents: genericData)
     }
 }
 

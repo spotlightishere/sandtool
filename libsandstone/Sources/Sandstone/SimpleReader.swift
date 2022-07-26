@@ -9,7 +9,7 @@ import Foundation
 
 /// TableOffset holds a value that can be resolved within lookup data
 /// towards the end of the bytecode format.
-typealias TableOffset = UInt16
+public typealias TableOffset = UInt16
 
 /// SimpleReader hacks together a read-only buffer, positioning,
 /// and a way to stop increasing positioning. This is useful so that

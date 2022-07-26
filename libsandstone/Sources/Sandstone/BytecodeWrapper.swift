@@ -27,36 +27,36 @@ public struct BytecodeProfile {
 /// It permits parsing the header, accessing offset tables, and common read operations.
 public struct BytecodeWrapper {
     /// The reader wrapping the given bytecode.
-    let contents: SimpleReader
+    private let contents: SimpleReader
 
     /// The header of this bytecode format.
-    let header: BytecodeHeader
+    public let header: BytecodeHeader
 
     /// Regex patterns within this file.
     // TODO: Determine their format and properly resolve.
-    let regexes: [TableOffset]
+    public let regexes: [TableOffset]
 
     /// Variable names within this bytecode format.
-    let variables: [String]
+    public let variables: [String]
 
     /// Variable states, possibly.
-    let variableStates: [TableOffset]
+    public let variableStates: [TableOffset]
 
     /// Entitlement key values within this bytecode format.
-    let entitlements: [String]
+    public let entitlements: [String]
 
     /// Instructions present within this bytecode format.
-    let instructions: [TableOffset]
+    public let instructions: [TableOffset]
 
     /// Profiles present within this bytecode format.
     /// Note that only collections will have more than one profile.
-    let profiles: [BytecodeProfile]
+    public let profiles: [BytecodeProfile]
 
     /// Contents referenced by unknownTwo, each 0x8 in length.
-    let unknownTwo: [Data]
+    public let unknownTwo: [Data]
 
     /// Contents referenced by unknownThree, each 0x800 in length.
-    let unknownThree: [Data]
+    public let unknownThree: [Data]
 
     public init(with rawData: Data) throws {
         // Start reading!

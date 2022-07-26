@@ -20,7 +20,7 @@ struct SandboxDocument: FileDocument {
     let hasBytecode: Bool
 
     /// The bytecode representation our document is meant to hold.
-    var bytecode: BytecodeWrapper?
+    let bytecode: BytecodeWrapper
 
     /// Initializes this document via a SBPL string.
     /// - Parameter sbpl: The SBPL to compile and dissect.
