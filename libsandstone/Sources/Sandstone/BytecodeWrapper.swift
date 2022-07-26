@@ -27,7 +27,7 @@ public struct BytecodeProfile {
 /// It permits parsing the header, accessing offset tables, and common read operations.
 public struct BytecodeWrapper {
     /// The reader wrapping the given bytecode.
-    private let contents: SimpleReader
+    public let contents: SimpleReader
 
     /// The header of this bytecode format.
     public let header: BytecodeHeader
@@ -37,13 +37,13 @@ public struct BytecodeWrapper {
     public let regexes: [TableOffset]
 
     /// Variable names within this bytecode format.
-    public let variables: [String]
+    public let variableOffsets: [TableOffset]
 
     /// Variable states, possibly.
     public let variableStates: [TableOffset]
 
     /// Entitlement key values within this bytecode format.
-    public let entitlements: [String]
+    public let entitlementKeyOffsets: [TableOffset]
 
     /// Instructions present within this bytecode format.
     public let instructions: [TableOffset]
@@ -53,10 +53,10 @@ public struct BytecodeWrapper {
     public let profiles: [BytecodeProfile]
 
     /// Contents referenced by unknownTwo, each 0x8 in length.
-    public let unknownTwo: [Data]
+    public let unknownTwo: [DataOffset]
 
     /// Contents referenced by unknownThree, each 0x800 in length.
-    public let unknownThree: [Data]
+    public let unknownThree: [DataOffset]
 
     public init(with rawData: Data) throws {
         // Start reading!
@@ -75,15 +75,13 @@ public struct BytecodeWrapper {
         regexes = contents.readHeaderOffsetTable(count: header.regexCount)
 
         // Next, variable offsets - variableCount * 2.
-        // We'll come back to resolve variable offsets later.
-        let variableOffsets = contents.readHeaderOffsetTable(count: header.variableCount)
+        variableOffsets = contents.readHeaderOffsetTable(count: header.variableCount)
 
         // Variable states, again following variableStateCount * 2.
         variableStates = contents.readHeaderOffsetTable(count: header.variableStateCount)
 
-        // Entitlement keys. Similar to variables, we'll resolve their strings
-        // later in initialization. Once again, entitlementKeyCount * 2.
-        let entitlementKeyOffsets = contents.readHeaderOffsetTable(count: header.entitlementKeyCount)
+        // Entitlement keys. Once again, entitlementKeyCount * 2.
+        entitlementKeyOffsets = contents.readHeaderOffsetTable(count: header.entitlementKeyCount)
 
         // Finally, instructions. This includes the last of offsets.
         // instructionCount * 2
@@ -106,7 +104,7 @@ public struct BytecodeWrapper {
 
             var tempProfiles: [BytecodeProfile] = []
             for profile in profileContents {
-                tempProfiles += [BytecodeProfile(data: profile)]
+                tempProfiles += [BytecodeProfile(data: profile.data)]
             }
             profiles = tempProfiles
         }
@@ -141,18 +139,23 @@ public struct BytecodeWrapper {
         // For reading, we're now done!
         // We have reached the offset within our binary file
         // to resolve table offsets.
+        // Subsequent calls to readBytes/readString will not need
+        // to adjust the reader's position.
+    }
 
-        // Lastly, resolve string offsets.
-        var variableTemp: [String] = []
-        for offset in variableOffsets {
-            variableTemp += [try contents.readString(at: offset)]
-        }
-        variables = variableTemp
+    /// Resolves a string at the given table offset.
+    /// - Parameter offset: The offset within the binary format to read from.
+    /// - Returns: The specified amount of data.
+    public func readString(at offset: TableOffset) throws -> String {
+        try contents.readString(at: offset)
+    }
 
-        var entitlementTemp: [String] = []
-        for offset in entitlementKeyOffsets {
-            entitlementTemp += [try contents.readString(at: offset)]
-        }
-        entitlements = entitlementTemp
+    /// Reads data at the given table offset.
+    /// - Parameters:
+    ///   - offset: The offset within the binary format to read from.
+    ///   - length: The length of data to read.
+    /// - Returns: The specified amount of data.
+    public func readBytes(at offset: TableOffset, length: Int) -> Data {
+        contents.readBytes(at: offset, length: length)
     }
 }

@@ -11,15 +11,21 @@ import Foundation
 /// towards the end of the bytecode format.
 public typealias TableOffset = UInt16
 
+/// A blob of data and its obtained offset.
+public struct DataOffset {
+    public let offset: Int
+    public let data: Data
+}
+
 /// SimpleReader hacks together a read-only buffer, positioning,
 /// and a way to stop increasing positioning. This is useful so that
 /// ``BytecodeWrapper`` and friends can iterate through the header
 /// and then eventually resolve offsets at the end of their data.
 ///
 /// An alternate name could be "HackyReader".
-class SimpleReader {
+public class SimpleReader {
     /// The data to read from.
-    let contents: Data
+    public let contents: Data
 
     /// The internal offset to base data from.
     var internalOffset: Int = 0
@@ -49,18 +55,20 @@ class SimpleReader {
     /// - Parameter count: Count of offset entries.
     /// - Parameter length: Amount of data to read.
     /// - Returns: An array of offsets.
-    func readHeaderDynamicLength(count: UInt16, length: Int) -> [Data] {
-        var result: [Data] = []
+    func readHeaderDynamicLength(count: UInt16, length: Int) -> [DataOffset] {
+        var result: [DataOffset] = []
 
         for _ in 0 ..< count {
-            let value = readHeaderBytes(length: length)
+            let data = readHeaderBytes(length: length)
+            let value = DataOffset(offset: internalOffset, data: data)
+
             result += [value]
         }
 
         return result
     }
 
-    func readHeaderDynamicLength(count: UInt8, length: Int) -> [Data] {
+    func readHeaderDynamicLength(count: UInt8, length: Int) -> [DataOffset] {
         readHeaderDynamicLength(count: UInt16(count), length: length)
     }
 
@@ -108,7 +116,6 @@ class SimpleReader {
     /// Reads the specified string at the given offset.
     /// - Parameters:
     ///   - offset: The offset within the binary format to read from.
-    ///   - length: How many bytes to read.
     /// - Returns: The specified amoiunt of data.
     func readString(at offset: TableOffset) throws -> String {
         // Table offsets should be multiplied by 0x8 to get their true value.
