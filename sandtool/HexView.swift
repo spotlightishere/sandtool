@@ -33,6 +33,6 @@ struct HexView_Previews: PreviewProvider {
 // http://stackoverflow.com/a/40089462
 extension Data {
     func hexEncodedString() -> String {
-        map { String(format: "%02hhx", $0) }.joined()
+        map { String(format: "%02hhx ", $0) }.joined()
     }
 }
