@@ -15,19 +15,20 @@ struct SandboxDocument: FileDocument {
         UTType.data,
     ]
 
-    /// Whether we have bytecode. If we don't
-    /// we we'll hackily display something blank.
-    let hasBytecode: Bool
+    /// A high level representation of the bytecode format we represent.
+    var bytecode: Bytecode
 
-    /// The bytecode representation our document is meant to hold.
-    let bytecode: BytecodeWrapper
+    /// An effective hack to allow UI representation.
+    var sidebarElements: [SidebarElement]
+
+    /// The raw, binary contents.
+    var rawContents: Data
 
     /// Initializes this document via a SBPL string.
     /// - Parameter sbpl: The SBPL to compile and dissect.
     init(sbpl: String) throws {
-        let data = try Sandstone.compile(profile: sbpl)
-        bytecode = try Sandstone.dissect(bytecode: data)
-        hasBytecode = true
+        let contents = try Sandstone.compile(profile: sbpl)
+        try self.init(data: contents)
     }
 
     /// Initializes this document via a file containing our bytecode format.
@@ -37,8 +38,16 @@ struct SandboxDocument: FileDocument {
             throw BytecodeError.tooSmall
         }
 
-        bytecode = try Sandstone.dissect(bytecode: contents)
-        hasBytecode = true
+        try self.init(data: contents)
+    }
+
+    /// Initializes this document via our bytecode format directly.
+    init(data: Data) throws {
+        rawContents = data
+
+        // Create our bytecode representation from the passed raw data.
+        bytecode = try Sandstone.dissect(bytecode: data)
+        sidebarElements = try generateSidebarItems(with: bytecode)
     }
 
     func fileWrapper(configuration _: WriteConfiguration) throws -> FileWrapper {

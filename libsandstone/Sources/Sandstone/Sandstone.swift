@@ -50,7 +50,7 @@ public enum Sandstone {
 
     /// Allows dissection of a bytecode formatted profile.
     /// - Parameter contents: The contents of the bytecode format.
-    public static func dissect(bytecode contents: Data) throws -> BytecodeWrapper {
-        try BytecodeWrapper(with: contents)
+    public static func dissect(bytecode contents: Data) throws -> Bytecode {
+        try Bytecode(with: contents)
     }
 }

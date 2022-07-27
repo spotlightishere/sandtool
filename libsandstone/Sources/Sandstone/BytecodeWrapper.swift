@@ -29,6 +29,8 @@ public struct BytecodeWrapper {
     /// The reader wrapping the given bytecode.
     public let contents: SimpleReader
 
+    // MARK: Actual properties
+
     /// The header of this bytecode format.
     public let header: BytecodeHeader
 
@@ -50,7 +52,7 @@ public struct BytecodeWrapper {
 
     /// Profiles present within this bytecode format.
     /// Note that only collections will have more than one profile.
-    public let profiles: [BytecodeProfile]
+    public let profiles: [DataOffset]
 
     /// Contents referenced by unknownTwo, each 0x8 in length.
     public let unknownTwo: [DataOffset]
@@ -58,13 +60,15 @@ public struct BytecodeWrapper {
     /// Contents referenced by unknownThree, each 0x800 in length.
     public let unknownThree: [DataOffset]
 
+    /// Resolves many object types within the given bytecode format.
+    /// - Parameter rawData: The raw data of this bytecode format.
     public init(with rawData: Data) throws {
         // Start reading!
         contents = SimpleReader(with: rawData)
 
         // We'll begin reading our header, starting at 0x0.
         // If updating this length, please additionally update BytecodeHeader.
-        let headerData = contents.readHeaderBytes(length: 0x10)
+        let headerData = try contents.readHeaderBytes(length: 0x10)
         header = try BytecodeHeader(with: headerData)
 
         // We're now at 0x10.
@@ -72,20 +76,20 @@ public struct BytecodeWrapper {
         // we'll finish at once done.
 
         // Read all offsets - that is, regexCount * 2 in length.
-        regexes = contents.readHeaderOffsetTable(count: header.regexCount)
+        regexes = try contents.readHeaderOffsetTable(count: header.regexCount)
 
         // Next, variable offsets - variableCount * 2.
-        variableOffsets = contents.readHeaderOffsetTable(count: header.variableCount)
+        variableOffsets = try contents.readHeaderOffsetTable(count: header.variableCount)
 
         // Variable states, again following variableStateCount * 2.
-        variableStates = contents.readHeaderOffsetTable(count: header.variableStateCount)
+        variableStates = try contents.readHeaderOffsetTable(count: header.variableStateCount)
 
         // Entitlement keys. Once again, entitlementKeyCount * 2.
-        entitlementKeyOffsets = contents.readHeaderOffsetTable(count: header.entitlementKeyCount)
+        entitlementKeyOffsets = try contents.readHeaderOffsetTable(count: header.entitlementKeyCount)
 
         // Finally, instructions. This includes the last of offsets.
         // instructionCount * 2
-        instructions = contents.readHeaderOffsetTable(count: header.instructionCount)
+        instructions = try contents.readHeaderOffsetTable(count: header.instructionCount)
 
         // That concludes offset tables! We're now at profile data.
         // This must be handled by the flags within the header.
@@ -93,20 +97,13 @@ public struct BytecodeWrapper {
             // This is a little tricky - if we're an individual profile,
             // we have exactly one profile 0x172 in length.
             // We'll read only that far in.
-            let profileData = contents.readHeaderBytes(length: 0x172)
-            profiles = [BytecodeProfile(data: profileData)]
+            profiles = try contents.readHeaderDynamicLength(count: UInt16(1), length: 0x172)
         } else {
             // If we're a collection, we need to iterate through all profiles.
             // For an unknown reason, collection profiles are 0x178 in length.
             // Perhaps the extra bytes provide an offset for the bundle's name.
             // TODO: determine
-            let profileContents = contents.readHeaderDynamicLength(count: header.profileCount, length: 0x178)
-
-            var tempProfiles: [BytecodeProfile] = []
-            for profile in profileContents {
-                tempProfiles += [BytecodeProfile(data: profile.data)]
-            }
-            profiles = tempProfiles
+            profiles = try contents.readHeaderDynamicLength(count: header.profileCount, length: 0x178)
         }
 
         // Beyond this, we need padding.
@@ -129,33 +126,17 @@ public struct BytecodeWrapper {
         // Perhaps we can assume it's related to raw operations.
         // It is referenced directly within the
         // "ProfileData" structure.
-        unknownTwo = contents.readHeaderDynamicLength(count: header.unknownTwo, length: 0x8)
+        unknownTwo = try contents.readHeaderDynamicLength(count: header.unknownTwo, length: 0x8)
 
         // This is additionally unknown.
         // I'm choosing to believe it exists to bewilder.
         // It has a size of 0x800.
-        unknownThree = contents.readHeaderDynamicLength(count: header.unknownThree, length: 0x800)
+        unknownThree = try contents.readHeaderDynamicLength(count: header.unknownThree, length: 0x800)
 
         // For reading, we're now done!
         // We have reached the offset within our binary file
         // to resolve table offsets.
         // Subsequent calls to readBytes/readString will not need
         // to adjust the reader's position.
-    }
-
-    /// Resolves a string at the given table offset.
-    /// - Parameter offset: The offset within the binary format to read from.
-    /// - Returns: The specified amount of data.
-    public func readString(at offset: TableOffset) throws -> String {
-        try contents.readString(at: offset)
-    }
-
-    /// Reads data at the given table offset.
-    /// - Parameters:
-    ///   - offset: The offset within the binary format to read from.
-    ///   - length: The length of data to read.
-    /// - Returns: The specified amount of data.
-    public func readBytes(at offset: TableOffset, length: Int) -> Data {
-        contents.readBytes(at: offset, length: length)
     }
 }
