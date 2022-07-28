@@ -59,6 +59,12 @@ public class SimpleReader {
         return readData
     }
 
+    /// Reads a UInt16, increasing positioning.
+    /// - Returns: Usable UInt16 created.
+    func readHeaderUInt16() throws -> UInt16 {
+        try readHeaderBytes(length: 2).uint16()
+    }
+
     /// Reads a repeated value for count over the amount specified by length.
     /// - Parameter count: Count of offset entries.
     /// - Parameter length: Amount of data to read.

@@ -17,10 +17,20 @@ public enum BytecodeError: String, Error {
 }
 
 /// BytecodeProfile represents a raw representation of a profile.
-// TODO: learn more about this
 public struct BytecodeProfile {
-    /// The contents of this profile.
-    public let data: Data
+    /// The index of this profile within policies.
+    public let index: Int
+
+    /// The offset to the name of this profile.
+    /// Individual profiles will not have a name.
+    public var nameOffset: TableOffset?
+
+    /// The offset to the syscall masks specified by this profile.
+    /// Individual profiles utilize the mask specified within the header flags.
+    public var syscallMask: UInt16
+
+    /// The data and offset of this profile within this bytecode format.
+    public let data: DataOffset
 }
 
 /// BytecodeWrapper allows reading various defined structures within a sandbox bytecode file.
@@ -52,7 +62,7 @@ public struct BytecodeWrapper {
 
     /// Profiles present within this bytecode format.
     /// Note that only collections will have more than one profile.
-    public let profiles: [DataOffset]
+    public let profiles: [BytecodeProfile]
 
     /// Contents referenced by unknownTwo, each 0x8 in length.
     public let unknownTwo: [DataOffset]
@@ -97,13 +107,45 @@ public struct BytecodeWrapper {
             // This is a little tricky - if we're an individual profile,
             // we have exactly one profile 0x172 in length.
             // We'll read only that far in.
-            profiles = try contents.readHeaderDynamicLength(count: UInt16(1), length: 0x172)
+            // This profile's syscall mask matches that of the header's.
+            let singleProfile = try contents.readHeaderBytes(length: 0x172)
+            profiles = [BytecodeProfile(
+                index: 0,
+                syscallMask: header.flags,
+                data: DataOffset(offset: contents.internalOffset, value: singleProfile)
+            )]
         } else {
             // If we're a collection, we need to iterate through all profiles.
             // For an unknown reason, collection profiles are 0x178 in length.
             // Perhaps the extra bytes provide an offset for the bundle's name.
             // TODO: determine
-            profiles = try contents.readHeaderDynamicLength(count: header.profileCount, length: 0x178)
+            var tempProfiles: [BytecodeProfile] = []
+
+            for _ in 0 ..< header.profileCount {
+                // The first two bytes of this profile is its name offset.
+                let nameOffset = try contents.readHeaderUInt16()
+
+                // Next, syscall mask.
+                let syscallMask = try contents.readHeaderUInt16()
+
+                // Lastly, the profile's policy index.
+                let index = try contents.readHeaderUInt16()
+
+                // Finally, read the profile itself.
+                let profileContents = try contents.readHeaderBytes(length: 0x172)
+
+                tempProfiles.append(BytecodeProfile(
+                    index: Int(index),
+                    nameOffset: TableOffset(nameOffset),
+                    syscallMask: syscallMask,
+                    data: DataOffset(
+                        offset: contents.internalOffset,
+                        value: profileContents
+                    )
+                ))
+            }
+
+            profiles = tempProfiles
         }
 
         // Beyond this, we need padding.

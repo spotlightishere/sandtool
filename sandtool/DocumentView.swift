@@ -82,6 +82,8 @@ struct DocumentView: View {
                     Text(name)
                 case let .data(index, _, _):
                     Text("\(index)")
+                case let .profile(name, _, _, _, _):
+                    Text("\(name)")
                 case let .string(_, value):
                     Text("\(value)")
                 }

@@ -16,6 +16,7 @@ public enum BytecodeItem: Hashable, Identifiable {
     case label(name: String)
     case data(index: Int, offset: Int, value: Data)
     case string(offset: Int, value: String)
+    case profile(name: String, syscallMask: UInt16, index: Int, offset: Int, value: Data)
 }
 
 // Some helpers to assist with conversion. A little too repetitive for my tastes!
@@ -35,6 +36,28 @@ extension BytecodeWrapper {
         try offsets.enumerated().map { _, offset in
             let data = try contents.readString(at: offset)
             return BytecodeItem.string(offset: offset.position, value: data)
+        }
+    }
+
+    /// Resolves all profiles to a higher level mapping.
+    func resolve(profiles: [BytecodeProfile]) throws -> [BytecodeItem] {
+        try profiles.map { profile in
+            // We can assume that profiles without a name offset are
+            // individual profiles.
+            var name: String
+            if let nameOffset = profile.nameOffset {
+                name = try contents.readString(at: nameOffset)
+            } else {
+                name = "Single Profile"
+            }
+
+            return BytecodeItem.profile(
+                name: name,
+                syscallMask: profile.syscallMask,
+                index: profile.index,
+                offset: profile.data.offset,
+                value: profile.data.value
+            )
         }
     }
 
@@ -93,7 +116,7 @@ public struct Bytecode {
             BytecodeItem.data(index: index, offset: value.position, value: "broken, come back later".data(using: .utf8)!)
         }
         // TODO: provide proper representation of profiles
-        profiles = wrapper.map(data: wrapper.profiles)
+        profiles = try wrapper.resolve(profiles: wrapper.profiles)
         unknownTwo = wrapper.map(data: wrapper.unknownTwo)
         unknownThree = wrapper.map(data: wrapper.unknownThree)
     }

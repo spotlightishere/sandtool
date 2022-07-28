@@ -25,6 +25,11 @@ struct DataView: View {
             case let .string(offset, value):
                 Text("\(value) at \(offset)")
                 Text("TODO: something something show references")
+            case let .profile(name, syscallMask, index, offset, value):
+                Text("Profile: \(name)")
+                Text("Syscall mask: \(syscallMask)")
+                Text("Policy index: \(index), data at \(offset)")
+                HexView(contents: value)
             default:
                 Text("Please select an item.")
             }
