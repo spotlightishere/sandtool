@@ -100,7 +100,9 @@ struct DocumentView: View {
                         .padding()
                 }.frame(minWidth: 800, minHeight: 500)
             } else {
+                // Ensure this frame matches that of the VSplitView above.
                 Text("Please select an item.")
+                    .frame(minWidth: 800, minHeight: 500)
             }
         }
     }
