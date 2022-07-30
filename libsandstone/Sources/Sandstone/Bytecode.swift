@@ -52,37 +52,6 @@ extension BytecodeWrapper {
         }
     }
 
-    /// Resolves all profiles to a higher level mapping.
-    func resolve(profiles: [BytecodeProfile]) throws -> [BytecodeItem] {
-        try profiles.map { profile in
-            // We can assume that profiles without a name offset are
-            // individual profiles.
-            var name: String
-            if let nameOffset = profile.nameOffset {
-                name = try contents.readString(at: nameOffset)
-            } else {
-                name = "Single Profile"
-            }
-
-            // Synthesize operations.
-            var namedOperations: [BytecodeNamedOperation] = []
-            for (index, operation) in profile.operations.enumerated() {
-                namedOperations += [BytecodeNamedOperation(
-                    name: SandboxOperations[index],
-                    operationNum: Int(operation)
-                )]
-            }
-
-            return BytecodeItem.profile(
-                name: name,
-                syscallMask: profile.syscallMask,
-                index: profile.index,
-                offset: profile.offset,
-                operations: namedOperations
-            )
-        }
-    }
-
     /// Transforms a ``DataOffset`` to a ``BytecodeItem.data``.
     func map(data offsets: [DataOffset]) -> [BytecodeItem] {
         offsets.enumerated().map { index, data in
