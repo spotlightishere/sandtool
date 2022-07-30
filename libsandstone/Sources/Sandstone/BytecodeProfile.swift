@@ -20,7 +20,7 @@ public struct BytecodeProfile {
     /// Individual profiles utilize the mask specified within the header flags.
     public var syscallMask: UInt16
 
-    /// The offset of this profile within this bytecode format.githu
+    /// The offset of this profile within this bytecode format.
     public let offset: Int
 
     /// The operation number this profile specifies for each available operation.
@@ -47,10 +47,11 @@ extension BytecodeWrapper {
 
             // Synthesize operations.
             var namedOperations: [BytecodeNamedOperation] = []
-            for (index, operation) in profile.operations.enumerated() {
+            for (index, operationEntry) in profile.operations.enumerated() {
                 namedOperations += [BytecodeNamedOperation(
+                    operationId: index,
                     name: SandboxOperations[index],
-                    operationNum: Int(operation)
+                    operationEntry: Int(operationEntry)
                 )]
             }
 

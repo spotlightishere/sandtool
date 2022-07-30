@@ -30,9 +30,17 @@ struct DataView: View {
                 Text("Syscall mask: \(syscallMask)")
                 Text("Policy index: \(index), data at \(offset)")
                 Table(operations) {
+                    TableColumn("Operation ID", value: \.operationIdString)
                     TableColumn("Operation Name", value: \.name)
-                    TableColumn("Operation Number", value: \.operationNumString)
+                    TableColumn("Operation Entry Number", value: \.operationEntryString)
                 }
+            case let .operation(index, value):
+                Text("\(index) at \(value.offset)")
+                Text("Opcode: \(value.opcode)")
+                Text("Unknown one: \(value.unknownOne)")
+                Text("Operation number: \(value.operationNum)")
+                Text("Unknown two: \(value.unknownTwo)")
+                Text("Unknown two: \(value.unknownThree)")
             default:
                 Text("Please select an item.")
             }
@@ -41,8 +49,11 @@ struct DataView: View {
 }
 
 public extension BytecodeNamedOperation {
-    /// A string of the operation number, useful for tables.
-    var operationNumString: String {
-        "\(operationNum)"
+    var operationIdString: String {
+        "\(operationId)"
+    }
+
+    var operationEntryString: String {
+        "\(operationEntry)"
     }
 }

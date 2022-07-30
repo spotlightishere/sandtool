@@ -48,7 +48,7 @@ public struct BytecodeWrapper {
     public let profiles: [BytecodeProfile]
 
     /// Contents referenced by operation entries, each 0x8 in length.
-    public let operationEntries: [DataOffset]
+    public let operationEntries: [BytecodeOperation]
 
     /// Contents referenced by unknownThree, each 0x800 in length.
     public let unknownThree: [DataOffset]
@@ -147,7 +147,13 @@ public struct BytecodeWrapper {
 
         // Now, we read our operation entries.
         // Each operation entry has a length of 0x8.
-        operationEntries = try contents.readHeaderDynamicLength(count: header.operationEntryCount, length: 0x8)
+        var tempOperations: [BytecodeOperation] = []
+        for _ in 0 ..< header.operationEntryCount {
+            let operationContents = try contents.readHeaderBytes(length: 0x8)
+            let operationEntry = BytecodeOperation(with: operationContents, at: contents.internalOffset)
+            tempOperations += [operationEntry]
+        }
+        operationEntries = tempOperations
 
         // From here on, we read our unknown block.
         // I'm choosing to believe it exists to bewilder.

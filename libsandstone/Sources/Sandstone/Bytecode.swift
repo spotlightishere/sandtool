@@ -17,6 +17,7 @@ public enum BytecodeItem: Hashable, Identifiable {
     case data(index: Int, offset: Int, value: Data)
     case string(offset: Int, value: String)
     case profile(name: String, syscallMask: UInt16, index: Int, offset: Int, operations: [BytecodeNamedOperation])
+    case operation(index: Int, value: BytecodeOperation)
 }
 
 /// BytecodeNamedOperation represents a pairing between an operation's name
@@ -24,12 +25,15 @@ public enum BytecodeItem: Hashable, Identifiable {
 public struct BytecodeNamedOperation: Hashable, Identifiable {
     public var id: Self { self }
 
+    /// The number or ID of this operation.
+    public let operationId: Int
+
     /// The name of the operation.
     public let name: String
 
-    /// The number of the operation this profile specifies for the operation.
-    /// Look for corresponding operation numbers within the operations table.
-    public let operationNum: Int
+    /// The number of the operation entry this profile specifies.
+    /// Look for corresponding operation entry numbers within the operations table.
+    public let operationEntry: Int
 }
 
 // Some helpers to assist with conversion. A little too repetitive for my tastes!
@@ -108,7 +112,7 @@ public struct Bytecode {
         }
         // TODO: provide proper representation of profiles
         profiles = try wrapper.resolve(profiles: wrapper.profiles)
-        operationEntries = wrapper.map(data: wrapper.operationEntries)
+        operationEntries = wrapper.resolve(operations: wrapper.operationEntries)
         unknownThree = wrapper.map(data: wrapper.unknownThree)
     }
 }

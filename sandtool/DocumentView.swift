@@ -86,6 +86,8 @@ struct DocumentView: View {
                     Text("\(name)")
                 case let .string(_, value):
                     Text("\(value)")
+                case let .operation(index, _):
+                    Text("\(index)")
                 }
             }.frame(minWidth: 200)
         } detail: {
