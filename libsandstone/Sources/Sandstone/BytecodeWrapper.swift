@@ -47,8 +47,8 @@ public struct BytecodeWrapper {
     /// Note that only collections will have more than one profile.
     public let profiles: [BytecodeProfile]
 
-    /// Contents referenced by unknownTwo, each 0x8 in length.
-    public let unknownTwo: [DataOffset]
+    /// Contents referenced by operation entries, each 0x8 in length.
+    public let operationEntries: [DataOffset]
 
     /// Contents referenced by unknownThree, each 0x800 in length.
     public let unknownThree: [DataOffset]
@@ -91,7 +91,7 @@ public struct BytecodeWrapper {
             // we only need to read the profile contents - no name, syscall mask, or index.
             // Its length is equal to the amount of operations times two:
             // that is, assuming 185 (0xb9) operations, its length is 370 (0x172).
-            let profileContents = try contents.readHeaderOffsetTable(count: header.operationCount)
+            let profileContents = try contents.readHeaderOffsetTable(count: header.tableOperationCount)
 
             // This profile's syscall mask matches that of the header's.
             profiles = [BytecodeProfile(
@@ -102,9 +102,8 @@ public struct BytecodeWrapper {
             )]
         } else {
             // If we're a collection, we need to iterate through all profiles.
-            // For an unknown reason, collection profiles are 0x178 in length.
-            // Perhaps the extra bytes provide an offset for the bundle's name.
-            // TODO: determine
+            // Compared to individual profiles, each profile has an offset to its name,
+            // a syscall mask, and a policy index prior to its actual contents.
             var tempProfiles: [BytecodeProfile] = []
 
             for _ in 0 ..< header.profileCount {
@@ -118,7 +117,7 @@ public struct BytecodeWrapper {
                 let index = try contents.readHeaderUInt16()
 
                 // Finally, read the profile itself.
-                let profileContents = try contents.readHeaderOffsetTable(count: header.operationCount)
+                let profileContents = try contents.readHeaderOffsetTable(count: header.tableOperationCount)
 
                 tempProfiles.append(BytecodeProfile(
                     index: Int(index),
@@ -146,15 +145,11 @@ public struct BytecodeWrapper {
             contents.internalOffset += 8 - andedValue
         }
 
-        // From here on, we read our two unknown blocks.
-        // It's not entirely clear on what this is - it may be
-        // some sort of address table, given its size of 0x8.
-        // Perhaps we can assume it's related to raw operations.
-        // It is referenced directly within the
-        // "ProfileData" structure.
-        unknownTwo = try contents.readHeaderDynamicLength(count: header.unknownTwo, length: 0x8)
+        // Now, we read our operation entries.
+        // Each operation entry has a length of 0x8.
+        operationEntries = try contents.readHeaderDynamicLength(count: header.operationEntryCount, length: 0x8)
 
-        // This is additionally unknown.
+        // From here on, we read our unknown block.
         // I'm choosing to believe it exists to bewilder.
         // It has a size of 0x800.
         unknownThree = try contents.readHeaderDynamicLength(count: header.unknownThree, length: 0x800)

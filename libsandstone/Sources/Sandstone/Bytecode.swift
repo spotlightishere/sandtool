@@ -115,8 +115,8 @@ public struct Bytecode {
     /// Profiles available within this bytecode format.
     public let profiles: [BytecodeItem]
 
-    /// Whatever's available of unknown two.
-    public let unknownTwo: [BytecodeItem]
+    /// Operation entries within this bytecode format.
+    public let operationEntries: [BytecodeItem]
 
     /// Whatever's available of unknown three.
     public let unknownThree: [BytecodeItem]
@@ -139,7 +139,7 @@ public struct Bytecode {
         }
         // TODO: provide proper representation of profiles
         profiles = try wrapper.resolve(profiles: wrapper.profiles)
-        unknownTwo = wrapper.map(data: wrapper.unknownTwo)
+        operationEntries = wrapper.map(data: wrapper.operationEntries)
         unknownThree = wrapper.map(data: wrapper.unknownThree)
     }
 }

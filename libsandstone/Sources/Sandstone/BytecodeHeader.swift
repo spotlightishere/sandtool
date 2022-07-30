@@ -23,21 +23,21 @@ public struct BytecodeHeader {
     ///  For ease of detection, see ``isCollection``.
     let flags: UInt16
 
-    /// An unknown value.
-    /// Its data is 0x8 in length.
-    // TODO: determine what this represents
-    let unknownTwo: UInt8
+    /// The amount of operation entries.
+    /// Operations dictate how rules are evaluated, and enforce the profile's policy.
+    /// Each operation entry is 0x8 in length.
+    let operationEntryCount: UInt8
 
-    /// Yet another unknown value.
+    /// An unknown value.
     /// Its data is a whopping 0x800 in length.
-    // TODO: also determine what this represents
+    // TODO: determine what this represents
     let unknownThree: UInt8
 
     /// Sandbox operation count.
     /// This must match the sandbox operation name table.
     /// Obeserved values have been 0xb6 (182) to 0xb9 (185),
     /// and likely will continue to increase as the operating systems grow.
-    let operationCount: UInt8
+    let tableOperationCount: UInt8
 
     /// The amount of pattern variables, such as `PROCESS_TEMP_DIR`,
     /// `ANY_USER`, or `ANY_USER_HOME`.
@@ -82,11 +82,11 @@ public struct BytecodeHeader {
         flags = contents.uint16(at: 0)
 
         // Next, two mystery values at 0x2 and 0x3.
-        unknownTwo = contents.uint8(at: 0x2)
+        operationEntryCount = contents.uint8(at: 0x2)
         unknownThree = contents.uint8(at: 0x3)
 
         // Count after count after count for offsets...
-        operationCount = contents.uint8(at: 0x4)
+        tableOperationCount = contents.uint8(at: 0x4)
         variableCount = contents.uint8(at: 0x5)
         variableStateCount = contents.uint8(at: 0x6)
 

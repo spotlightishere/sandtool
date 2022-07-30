@@ -58,8 +58,8 @@ func generateSidebarItems(with format: Bytecode) throws -> [SidebarElement] {
             children: format.profiles.elements()
         ),
         SidebarElement(
-            value: .label(name: "Unknown Two"),
-            children: format.unknownTwo.elements()
+            value: .label(name: "Operation Entries"),
+            children: format.operationEntries.elements()
         ),
         SidebarElement(
             value: .label(name: "Unknown Three"),
