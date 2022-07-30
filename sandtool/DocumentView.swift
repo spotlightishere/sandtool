@@ -87,7 +87,7 @@ struct DocumentView: View {
                 case let .string(_, value):
                     Text("\(value)")
                 }
-            }
+            }.frame(minWidth: 200)
         } detail: {
             if let selectedItem = selectedItem {
                 VSplitView {
