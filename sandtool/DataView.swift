@@ -25,14 +25,24 @@ struct DataView: View {
             case let .string(offset, value):
                 Text("\(value) at \(offset)")
                 Text("TODO: something something show references")
-            case let .profile(name, syscallMask, index, offset, value):
+            case let .profile(name, syscallMask, index, offset, operations):
                 Text("Profile: \(name)")
                 Text("Syscall mask: \(syscallMask)")
                 Text("Policy index: \(index), data at \(offset)")
-                HexView(contents: value)
+                Table(operations) {
+                    TableColumn("Operation Name", value: \.name)
+                    TableColumn("Operation Number", value: \.operationNumString)
+                }
             default:
                 Text("Please select an item.")
             }
         }.frame(maxWidth: .infinity)
+    }
+}
+
+public extension BytecodeNamedOperation {
+    /// A string of the operation number, useful for tables.
+    var operationNumString: String {
+        "\(operationNum)"
     }
 }

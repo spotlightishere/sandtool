@@ -16,7 +16,20 @@ public enum BytecodeItem: Hashable, Identifiable {
     case label(name: String)
     case data(index: Int, offset: Int, value: Data)
     case string(offset: Int, value: String)
-    case profile(name: String, syscallMask: UInt16, index: Int, offset: Int, value: Data)
+    case profile(name: String, syscallMask: UInt16, index: Int, offset: Int, operations: [BytecodeNamedOperation])
+}
+
+/// BytecodeNamedOperation represents a pairing between an operation's name
+/// and its entrypoint, per profile definition.
+public struct BytecodeNamedOperation: Hashable, Identifiable {
+    public var id: Self { self }
+
+    /// The name of the operation.
+    public let name: String
+
+    /// The number of the operation this profile specifies for the operation.
+    /// Look for corresponding operation numbers within the operations table.
+    public let operationNum: Int
 }
 
 // Some helpers to assist with conversion. A little too repetitive for my tastes!
@@ -51,12 +64,21 @@ extension BytecodeWrapper {
                 name = "Single Profile"
             }
 
+            // Synthesize operations.
+            var namedOperations: [BytecodeNamedOperation] = []
+            for (index, operation) in profile.operations.enumerated() {
+                namedOperations += [BytecodeNamedOperation(
+                    name: SandboxOperations[index],
+                    operationNum: Int(operation)
+                )]
+            }
+
             return BytecodeItem.profile(
                 name: name,
                 syscallMask: profile.syscallMask,
                 index: profile.index,
-                offset: profile.data.offset,
-                value: profile.data.value
+                offset: profile.offset,
+                operations: namedOperations
             )
         }
     }

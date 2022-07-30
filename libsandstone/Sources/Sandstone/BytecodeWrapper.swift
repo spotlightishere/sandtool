@@ -16,23 +16,6 @@ public enum BytecodeError: String, Error {
     case unknownBytecodeFlag = "An unknown bytecode flag was encountered."
 }
 
-/// BytecodeProfile represents a raw representation of a profile.
-public struct BytecodeProfile {
-    /// The index of this profile within policies.
-    public let index: Int
-
-    /// The offset to the name of this profile.
-    /// Individual profiles will not have a name.
-    public var nameOffset: TableOffset?
-
-    /// The offset to the syscall masks specified by this profile.
-    /// Individual profiles utilize the mask specified within the header flags.
-    public var syscallMask: UInt16
-
-    /// The data and offset of this profile within this bytecode format.
-    public let data: DataOffset
-}
-
 /// BytecodeWrapper allows reading various defined structures within a sandbox bytecode file.
 /// It permits parsing the header, accessing offset tables, and common read operations.
 public struct BytecodeWrapper {
@@ -105,14 +88,17 @@ public struct BytecodeWrapper {
         // This must be handled by the flags within the header.
         if header.isSingleProfile {
             // This is a little tricky - if we're an individual profile,
-            // we have exactly one profile 0x172 in length.
-            // We'll read only that far in.
+            // we only need to read the profile contents - no name, syscall mask, or index.
+            // Its length is equal to the amount of operations times two:
+            // that is, assuming 185 (0xb9) operations, its length is 370 (0x172).
+            let profileContents = try contents.readHeaderOffsetTable(count: header.operationCount)
+
             // This profile's syscall mask matches that of the header's.
-            let singleProfile = try contents.readHeaderBytes(length: 0x172)
             profiles = [BytecodeProfile(
                 index: 0,
                 syscallMask: header.flags,
-                data: DataOffset(offset: contents.internalOffset, value: singleProfile)
+                offset: contents.internalOffset,
+                operations: profileContents
             )]
         } else {
             // If we're a collection, we need to iterate through all profiles.
@@ -132,16 +118,14 @@ public struct BytecodeWrapper {
                 let index = try contents.readHeaderUInt16()
 
                 // Finally, read the profile itself.
-                let profileContents = try contents.readHeaderBytes(length: 0x172)
+                let profileContents = try contents.readHeaderOffsetTable(count: header.operationCount)
 
                 tempProfiles.append(BytecodeProfile(
                     index: Int(index),
                     nameOffset: TableOffset(nameOffset),
                     syscallMask: syscallMask,
-                    data: DataOffset(
-                        offset: contents.internalOffset,
-                        value: profileContents
-                    )
+                    offset: contents.internalOffset,
+                    operations: profileContents
                 ))
             }
 
