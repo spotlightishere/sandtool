@@ -10,6 +10,14 @@ import SwiftUI
 struct HexView: View {
     var contents: Data
 
+    init(contents: Binding<Data>) {
+        self.contents = contents.wrappedValue
+    }
+
+    init(contents: Data) {
+        self.contents = contents
+    }
+
     var body: some View {
         TextEditor(text: .constant(contents.hexEncodedString()))
             // #1F1F1F
@@ -19,14 +27,17 @@ struct HexView: View {
 }
 
 struct HexView_Previews: PreviewProvider {
-    static var emptyData = Data()
-    static var genericData = Data(repeating: 0xFF, count: 32)
+    @State static var emptyData = Data()
+    @State static var genericData = Data(repeating: 0xFF, count: 32)
+    static var genericDataNotBinding = Data(repeating: 0xAA, count: 32)
 
     static var previews: some View {
         // Generic empty view
-        HexView(contents: emptyData)
+        HexView(contents: $emptyData)
         // Generic data view
-        HexView(contents: genericData)
+        HexView(contents: $genericData)
+        // Generic data view without binding variable
+        HexView(contents: genericDataNotBinding)
     }
 }
 

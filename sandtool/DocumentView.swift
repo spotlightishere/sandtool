@@ -91,21 +91,20 @@ struct DocumentView: View {
                 }
             }.frame(minWidth: 200)
         } detail: {
-            if let selectedItem = selectedItem {
-                VSplitView {
+            VSplitView {
+                if let selectedItem = selectedItem {
                     DataView(bytecode: $document.bytecode.wrappedValue, item: selectedItem.value)
-                        .frame(minHeight: 250)
-                        .padding()
+                        .frame(minWidth: 800, minHeight: 250)
+                } else {
+                    // Ensure this frame matches that of the VSplitView above.
+                    Text("Please select an item.")
+                        .frame(minWidth: 800, minHeight: 250)
+                }
 
-                    HexView(contents: $document.rawContents.wrappedValue)
-                        .frame(minHeight: 200)
-                        .padding()
-                }.frame(minWidth: 800, minHeight: 500)
-            } else {
-                // Ensure this frame matches that of the VSplitView above.
-                Text("Please select an item.")
-                    .frame(minWidth: 800, minHeight: 500)
-            }
+                HexView(contents: $document.rawContents)
+                    .frame(minHeight: 200)
+            }.frame(minWidth: 800, minHeight: 500)
+                .padding()
         }
     }
 }

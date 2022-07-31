@@ -18,7 +18,7 @@ struct sandtoolApp: App {
             fatalError("Should not reach here. \(e)")
         }
     }
-    
+
     var body: some Scene {
         DocumentGroup(newDocument: validSandbox()) { file in
             DocumentView(document: file.$document)
