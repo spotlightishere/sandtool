@@ -19,9 +19,8 @@ public struct BytecodeOperation: Equatable, Hashable {
     ///   - `0x01`: This operation node entry ends evaluation.
     public let opcode: UInt8
 
-    /// An unknown value.
-    /// Perhaps related to chaining entries together.
-    public let unknownOne: UInt8
+    /// The filter to apply while evaluating this operation.
+    public let filter: UInt8
 
     /// The number of this operation entry.
     public let operationNum: UInt16
@@ -39,7 +38,7 @@ public struct BytecodeOperation: Equatable, Hashable {
 
     init(with contents: Data, at offset: Int) {
         opcode = contents.uint8(at: 0x0)
-        unknownOne = contents.uint8(at: 0x01)
+        filter = contents.uint8(at: 0x01)
         operationNum = contents.uint16(at: 0x02)
         unknownTwo = contents.uint16(at: 0x04)
         unknownThree = contents.uint16(at: 0x06)

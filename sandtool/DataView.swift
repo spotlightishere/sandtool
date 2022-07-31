@@ -35,12 +35,11 @@ struct DataView: View {
                     TableColumn("Operation Entry Number", value: \.operationEntryString)
                 }
             case let .operation(index, value):
-                Text("\(index) at \(value.offset)")
+                Text("Entry \(index) at \(value.offset), operation \(value.operationNum)")
                 Text("Opcode: \(value.opcode)")
-                Text("Unknown one: \(value.unknownOne)")
-                Text("Operation number: \(value.operationNum)")
+                Text("Filter: \(value.filter & 0x7f) (\(String(format: "%02hhx", value.filter  & 0x7f)))")
                 Text("Unknown two: \(value.unknownTwo)")
-                Text("Unknown two: \(value.unknownThree)")
+                Text("Unknown three: \(value.unknownThree)")
             default:
                 Text("Please select an item.")
             }
@@ -48,7 +47,7 @@ struct DataView: View {
     }
 }
 
-public extension BytecodeNamedOperation {
+extension BytecodeNamedOperation {
     var operationIdString: String {
         "\(operationId)"
     }
