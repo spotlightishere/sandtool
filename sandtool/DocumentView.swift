@@ -71,12 +71,27 @@ func generateSidebarItems(with format: Bytecode) throws -> [SidebarElement] {
 struct DocumentView: View {
     @Binding var document: SandboxDocument
 
+    /// A high level representation of the bytecode format we represent.
+    var bytecode: Bytecode {
+        $document.bytecode.wrappedValue!
+    }
+
+    /// The raw, binary contents of this bytecode format.
+    var rawContents: Data {
+        $document.rawContents.wrappedValue!
+    }
+
+    /// An effective hack to allow UI representation.
+    var sidebarElements: [SidebarElement] {
+        $document.sidebarElements.wrappedValue!
+    }
+
     /// The current sandbox item to work with.
     @State var selectedItem: SidebarElement?
 
     var body: some View {
         NavigationSplitView {
-            List($document.sidebarElements.wrappedValue, children: \.children, selection: $selectedItem) { item in
+            List(sidebarElements, children: \.children, selection: $selectedItem) { item in
                 switch item.value {
                 case let .label(name):
                     Text(name)
@@ -93,7 +108,7 @@ struct DocumentView: View {
         } detail: {
             VSplitView {
                 if let selectedItem = selectedItem {
-                    DataView(bytecode: $document.bytecode.wrappedValue, item: selectedItem.value)
+                    DataView(bytecode: bytecode, item: selectedItem.value)
                         .frame(minWidth: 800, minHeight: 250)
                 } else {
                     // Ensure this frame matches that of the VSplitView above.
@@ -101,7 +116,7 @@ struct DocumentView: View {
                         .frame(minWidth: 800, minHeight: 250)
                 }
 
-                HexView(contents: $document.rawContents)
+                HexView(contents: rawContents)
                     .frame(minHeight: 200)
             }.frame(minWidth: 800, minHeight: 500)
                 .padding()

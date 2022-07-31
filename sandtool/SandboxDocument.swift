@@ -16,20 +16,21 @@ struct SandboxDocument: FileDocument {
     ]
 
     /// A high level representation of the bytecode format we represent.
-    var bytecode: Bytecode
-
-    /// An effective hack to allow UI representation.
-    var sidebarElements: [SidebarElement]
+    var bytecode: Bytecode?
 
     /// The raw, binary contents.
-    var rawContents: Data
+    var rawContents: Data?
 
-    /// Initializes this document via a SBPL string.
-    /// - Parameter sbpl: The SBPL to compile and dissect.
-    init(sbpl: String) throws {
-        let contents = try Sandstone.compile(profile: sbpl)
-        try self.init(data: contents)
-    }
+    /// Whether the document can represent bytecode,
+    /// and is not an empty document.
+    // TODO: can we do away with this somehow?
+    var hasBytecode: Bool = false
+
+    /// An effective hack to allow UI representation.
+    var sidebarElements: [SidebarElement]?
+
+    /// Initializes an empty document.
+    init() {}
 
     /// Initializes this document via a file containing our bytecode format.
     /// - Parameter config: File configuration given by the system.
@@ -38,19 +39,23 @@ struct SandboxDocument: FileDocument {
             throw BytecodeError.tooSmall
         }
 
-        try self.init(data: contents)
+        try updateBytecode(contents: contents)
     }
 
-    /// Initializes this document via our bytecode format directly.
-    init(data: Data) throws {
-        rawContents = data
+    mutating func updateSBPL(_ sbpl: String) throws {
+        let contents = try Sandstone.compile(profile: sbpl)
+        try updateBytecode(contents: contents)
+    }
 
+    mutating func updateBytecode(contents: Data) throws {
+        rawContents = contents
         // Create our bytecode representation from the passed raw data.
-        bytecode = try Sandstone.dissect(bytecode: data)
-        sidebarElements = try generateSidebarItems(with: bytecode)
+        bytecode = try Sandstone.dissect(bytecode: contents)
+        sidebarElements = try generateSidebarItems(with: bytecode!)
+        hasBytecode = true
     }
 
     func fileWrapper(configuration _: WriteConfiguration) throws -> FileWrapper {
-        .init(regularFileWithContents: rawContents)
+        .init(regularFileWithContents: rawContents ?? Data())
     }
 }

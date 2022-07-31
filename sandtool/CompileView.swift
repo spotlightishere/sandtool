@@ -9,8 +9,13 @@ import Sandstone
 import SwiftUI
 
 struct CompileView: View {
-    @State private var input: String = "Input"
-    @State private var output: Data = .init()
+    @Binding var document: SandboxDocument
+    @State private var input: String = """
+    (version 3)
+
+    (deny default)
+    """
+
     @State private var compilerError: String = ""
 
     var body: some View {
@@ -21,7 +26,7 @@ struct CompileView: View {
 
             Button("Compile", action: {
                 do {
-                    output = try Sandstone.compile(profile: input)
+                    try document.updateSBPL(input)
                     compilerError = ""
                 } catch let e as SandboxError {
                     compilerError = "An error occurred while compiling:\n\n \(e.message)"
@@ -30,17 +35,12 @@ struct CompileView: View {
                 }
             })
 
-            ZStack {
-                // Hex output view on success
-                HexView(contents: output)
-
-                // Error view on failure
-                if !compilerError.isEmpty {
-                    TextEditor(text: .constant(compilerError))
-                        // #1F1F1F
-                        .foregroundColor(.red)
-                        .font(.system(.body, design: .monospaced))
-                }
+            // Error view on failure
+            if !compilerError.isEmpty {
+                TextEditor(text: .constant(compilerError))
+                    // #1F1F1F
+                    .foregroundColor(.red)
+                    .font(.system(.body, design: .monospaced))
             }
         }.padding()
     }
@@ -53,11 +53,5 @@ extension NSTextView {
         didSet {
             isAutomaticQuoteSubstitutionEnabled = false
         }
-    }
-}
-
-struct CompileView_Previews: PreviewProvider {
-    static var previews: some View {
-        CompileView()
     }
 }
