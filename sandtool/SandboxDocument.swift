@@ -51,7 +51,6 @@ struct SandboxDocument: FileDocument {
     }
 
     func fileWrapper(configuration _: WriteConfiguration) throws -> FileWrapper {
-        // We do not support writing.
         .init(regularFileWithContents: rawContents)
     }
 }
