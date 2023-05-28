@@ -99,15 +99,12 @@ public struct BytecodeWrapper {
             // a syscall mask, and a policy index prior to its actual contents.
             var tempProfiles: [BytecodeProfile] = []
 
-            for _ in 0 ..< header.profileCount {
+            for index in 0 ..< header.profileCount {
                 // The first two bytes of this profile is its name offset.
                 let nameOffset = try contents.readHeaderUInt16()
 
-                // Next, syscall mask.
+                // It also includes a syscall mask.
                 let syscallMask = try contents.readHeaderUInt16()
-
-                // Lastly, the profile's policy index.
-                let index = try contents.readHeaderUInt16()
 
                 // Finally, read the profile itself.
                 let profileContents = try contents.readHeaderOffsetTable(count: header.tableOperationCount)
@@ -128,12 +125,12 @@ public struct BytecodeWrapper {
         // Per Ghidra, this should be like the following:
         //
         //   instr_offset = offset of instruction table
-        //   profile_offset = offset past profile 0x172 in length
-        //   padding = (instr_offset - (profile_offset & 7)) + 0x17a
+        //   profile_offset = offset past profile 0x174 in length
+        //   padding = (instr_offset - (profile_offset & 6)) + 0x17c
         //
-        // However, 0x17a - 0x172 is 8, so we can (8 - (profile_offset & 7)).
+        // However, 0x17c - 0x174 is 8, so we can (8 - (profile_offset & 6)).
         // In our case, the offset is the current position of our reader.
-        let andedValue = contents.internalOffset & 7
+        let andedValue = contents.internalOffset & 6
         if andedValue != 0 {
             contents.internalOffset += 8 - andedValue
         }
