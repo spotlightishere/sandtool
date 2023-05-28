@@ -37,9 +37,6 @@ public struct BytecodeWrapper {
     /// Variable states, possibly.
     public let variableStates: [TableOffset]
 
-    /// Entitlement key values within this bytecode format.
-    public let entitlementKeyOffsets: [TableOffset]
-
     /// Instructions present within this bytecode format.
     public let instructions: [TableOffset]
 
@@ -60,11 +57,10 @@ public struct BytecodeWrapper {
         contents = SimpleReader(with: rawData)
 
         // We'll begin reading our header, starting at 0x0.
-        // If updating this length, please additionally update BytecodeHeader.
-        let headerData = try contents.readHeaderBytes(length: 0x10)
+        let headerData = try contents.readHeaderBytes(length: Sandstone.SPBL_HEADER_LENGTH)
         header = try BytecodeHeader(with: headerData)
 
-        // We're now at 0x10.
+        // We're now at 0xe.
         // The next 5 variables are all offset tables, pointing to data
         // we'll finish at once done.
 
@@ -76,9 +72,6 @@ public struct BytecodeWrapper {
 
         // Variable states, again following variableStateCount * 2.
         variableStates = try contents.readHeaderOffsetTable(count: header.variableStateCount)
-
-        // Entitlement keys. Once again, entitlementKeyCount * 2.
-        entitlementKeyOffsets = try contents.readHeaderOffsetTable(count: header.entitlementKeyCount)
 
         // Finally, instructions. This includes the last of offsets.
         // instructionCount * 2

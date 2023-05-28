@@ -56,22 +56,15 @@ public struct BytecodeHeader {
     /// The amount of regex contents within this bytecode format.
     let regexCount: UInt16
 
-    /// The amount of entitlement key strings present
-    /// within this bytecode format.
-    // TODO: This value likely replaces the "ENTITLEMENT:"
-    // prefixed strings within iOS/watchOS/tvOS - can we confirm?
-    let entitlementKeyCount: UInt16
-
     /// The amount of instructions present within this bytecode format.
     // TODO: What defines an instruction?
     let instructionCount: UInt16
 
     /// Reads from the given contents and stores header values.
-    /// - Parameter contents: 16 (0x10) bytes.
+    /// - Parameter contents: 14 (0xe) bytes.
     public init(with contents: Data) throws {
-        if contents.count != 0x10 {
-            // If updating this length, please additionally update BytecodeWrapper.
-            preconditionFailure("The header contents should always be 0x10 in length per subscripts.")
+        if contents.count != Sandstone.SPBL_HEADER_LENGTH {
+            preconditionFailure("The header contents should always be 0xe in length per subscripts.")
         }
 
         // And now we read!
@@ -95,8 +88,7 @@ public struct BytecodeHeader {
 
         profileCount = contents.uint16(at: 0x8)
         regexCount = contents.uint16(at: 0xA)
-        entitlementKeyCount = contents.uint16(at: 0xC)
-        instructionCount = contents.uint16(at: 0xE)
+        instructionCount = contents.uint16(at: 0xC)
 
         // And we're done!
 

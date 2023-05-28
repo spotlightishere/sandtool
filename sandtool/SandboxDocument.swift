@@ -38,6 +38,10 @@ struct SandboxDocument: FileDocument {
         guard let contents = config.file.regularFileContents else {
             throw BytecodeError.tooSmall
         }
+        // Minimum bytecode length.
+        guard contents.count > Sandstone.SPBL_HEADER_LENGTH else {
+            throw BytecodeError.tooSmall
+        }
 
         try updateBytecode(contents: contents)
     }

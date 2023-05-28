@@ -17,7 +17,7 @@ struct SidebarElement: Hashable, Identifiable {
     var children: [SidebarElement]?
 }
 
-extension Array where Element == BytecodeItem {
+extension [BytecodeItem] {
     /// Helper to allow easy mapping of BytecodeItems to SidebarElements.
     func elements() -> [SidebarElement]? {
         if isEmpty {
@@ -44,10 +44,6 @@ func generateSidebarItems(with format: Bytecode) throws -> [SidebarElement] {
         SidebarElement(
             value: .label(name: "Variable States"),
             children: format.variableStates.elements()
-        ),
-        SidebarElement(
-            value: .label(name: "Entitlements"),
-            children: format.entitlements.elements()
         ),
         SidebarElement(
             value: .label(name: "Instructions"),
@@ -107,7 +103,7 @@ struct DocumentView: View {
             }.frame(minWidth: 200)
         } detail: {
             VSplitView {
-                if let selectedItem = selectedItem {
+                if let selectedItem {
                     DataView(bytecode: bytecode, item: selectedItem.value)
                         .frame(minWidth: 800, minHeight: 250)
                 } else {

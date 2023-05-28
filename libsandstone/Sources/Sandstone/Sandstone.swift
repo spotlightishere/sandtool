@@ -15,6 +15,9 @@ public struct SandboxError: Error {
 }
 
 public enum Sandstone {
+    /// The maximum length of a SBPL header.
+    public static let SPBL_HEADER_LENGTH = 0xE
+
     /// Compiles the passed profile in SBPL.
     /// - Parameter profile: A string of SBPL to request to be compiled
     /// - Returns: The compiled profile's bytecode.

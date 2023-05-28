@@ -79,9 +79,6 @@ public struct Bytecode {
     /// Variable states available within this bytecode format.
     public let variableStates: [BytecodeItem]
 
-    /// Entitlement keys available within this bytecode format.
-    public let entitlements: [BytecodeItem]
-
     /// Instructions available within this bytecode format.
     public let instructions: [BytecodeItem]
 
@@ -104,7 +101,6 @@ public struct Bytecode {
         regexes = try wrapper.resolve(data: wrapper.regexes)
         variables = try wrapper.resolve(string: wrapper.variableOffsets)
         variableStates = try wrapper.resolve(data: wrapper.variableStates)
-        entitlements = try wrapper.resolve(string: wrapper.entitlementKeyOffsets)
         // TODO: how can we handle these?
         // Possibly "indexed profiles"?
         instructions = wrapper.instructions.enumerated().map { index, value in

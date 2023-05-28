@@ -166,6 +166,7 @@ public let SandboxOperations = [
     "syscall*",
     "syscall-unix",
     "syscall-mach",
+    "syscall-mig",
     "sysctl*",
     "sysctl-read",
     "sysctl-write",

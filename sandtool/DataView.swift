@@ -36,7 +36,14 @@ struct DataView: View {
                 }
             case let .operation(index, value):
                 Text("Entry \(index) at \(value.offset), operation \(value.operationNum)")
-                Text("Opcode: \(value.opcode)")
+                switch value.opcode {
+                case 0:
+                    Text("Opcode: Continue")
+                case 1:
+                    Text("Opcode: End Evaluation")
+                default:
+                    Text("Opcode: Unknown opcode")
+                }
                 Text("Filter: \(value.filter & 0x7F) (\(String(format: "%02hhx", value.filter & 0x7F)))")
                 Text("Unknown two: \(value.unknownTwo)")
                 Text("Unknown three: \(value.unknownThree)")
