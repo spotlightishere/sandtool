@@ -8,7 +8,7 @@
 import Foundation
 
 /// SandboxOperations represents the list of
-/// sandbox operations for macOS 13.0 (22A5295i).
+/// sandbox operations for macOS 13.5 (22G5027e).
 ///
 /// !!!! TODO: REMOVE !!!!
 /// This list varies so heavily across versions it's not funny.
